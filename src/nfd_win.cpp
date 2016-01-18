@@ -15,7 +15,13 @@
 #include <assert.h>
 //#include <atlbase.h>
 #include <windows.h>
+#ifdef __MINGW32__ /* mingw support -> rename sprintf and include IFileDialog headers*/
+#define sprintf_s snprintf
+#include <shobjidl.h>
+#include <shlobj.h>
+#else
 #include <ShlObj.h>
+#endif
 
 #include "nfd_common.h"
 
@@ -371,13 +377,14 @@ nfdresult_t NFD_OpenDirectoryDialog( const char *filterList,
     HRESULT result = ::CoInitializeEx(NULL,
                                       ::COINIT_APARTMENTTHREADED |
                                       ::COINIT_DISABLE_OLE1DDE );
+    
+    ::IFileOpenDialog *fileOpenDialog(NULL);
+    
     if ( !SUCCEEDED(result))
     {
         NFDi_SetError("Could not initialize COM.");
         goto end;
     }
-
-    ::IFileOpenDialog *fileOpenDialog(NULL);
 
     // Create dialog
     result = ::CoCreateInstance(::CLSID_FileOpenDialog, NULL,
@@ -474,13 +481,14 @@ nfdresult_t NFD_OpenDialog( const char *filterList,
     HRESULT result = ::CoInitializeEx(NULL,
                                       ::COINIT_APARTMENTTHREADED |
                                       ::COINIT_DISABLE_OLE1DDE );
+    
+    ::IFileOpenDialog *fileOpenDialog(NULL);
+    
     if ( !SUCCEEDED(result))
     {
         NFDi_SetError("Could not initialize COM.");
         goto end;
     }
-
-    ::IFileOpenDialog *fileOpenDialog(NULL);
 
     // Create dialog
     result = ::CoCreateInstance(::CLSID_FileOpenDialog, NULL,
@@ -562,13 +570,14 @@ nfdresult_t NFD_OpenDialogMultiple( const nfdchar_t *filterList,
     HRESULT result = ::CoInitializeEx(NULL,
                                       ::COINIT_APARTMENTTHREADED |
                                       ::COINIT_DISABLE_OLE1DDE );
+    
+    ::IFileOpenDialog *fileOpenDialog(NULL);
+    
     if ( !SUCCEEDED(result))
     {
         NFDi_SetError("Could not initialize COM.");
         return NFD_ERROR;
     }
-
-    ::IFileOpenDialog *fileOpenDialog(NULL);
 
     // Create dialog
     result = ::CoCreateInstance(::CLSID_FileOpenDialog, NULL,
@@ -654,13 +663,14 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
     HRESULT result = ::CoInitializeEx(NULL,
                                       ::COINIT_APARTMENTTHREADED |
                                       ::COINIT_DISABLE_OLE1DDE );
+    
+    ::IFileSaveDialog *fileSaveDialog(NULL);
+    
     if ( !SUCCEEDED(result))
     {
         NFDi_SetError("Could not initialize COM.");
         return NFD_ERROR;
     }
-
-    ::IFileSaveDialog *fileSaveDialog(NULL);
 
     // Create dialog
     result = ::CoCreateInstance(::CLSID_FileSaveDialog, NULL,
